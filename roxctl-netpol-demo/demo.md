@@ -17,7 +17,7 @@ visualize the connectivity posture induced by the network policies and workloads
 
 #### Demo
 
-Run `connectivity map` command on a dir of YAML manifests (such as `Deployment, NetworkPolicy, Route`) from [security-demos](https://github.com/ralvares/security-demos): 
+Run `connectivity map` command on a dir of YAML manifests ,such as `Deployment, NetworkPolicy, Route` (copied from [security-demos](https://github.com/ralvares/security-demos) ): 
 ```
 git clone git@github.com:np-guard/netpol-analyzer.git
 cd netpol-analyzer/tests/acs-security-demos-with-netpol-list
