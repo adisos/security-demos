@@ -138,7 +138,7 @@ Goal: Analyze two sets of Kubernetes manifests, including network policies, in t
 Produce a list of a differences in terms of allowed connections.
 
 
-demo2: cmpare connectivitiy between manifest versions after modifying network policies
+
 
 
 
@@ -199,75 +199,32 @@ The connectivity diff output for this example:
 
 #### Demo3: example of changed connections due to changes in network policy manifests
 
+Scenario example: a typo in a label of a `podSelector`, manually edited in a network policy YAML.
+
 ```
-diff acs-security-demos/acs_netpols.yaml acs-security-demos-new/acs_netpols.yaml
-10,15c10
-<   ingress:
-<   - from:
-<     - namespaceSelector: {}
-<     ports:
-<     - port: 8080
-<       protocol: TCP
----
->   ingress: [] # blocking any ingress
-46c41
-<     - port: 8080
----
->     - port: 9080       # changed to the new port
-130c125
-<           app: mastercard-processor
----
->           app: mastercard-processor  # removed its deployment - the rules will not be considered
-278c273
-<     - port: 8080
----
->     - port: 9080  # changed
-324,334c319
-<   ingress:
-<   - from:
-<     - namespaceSelector:
-<         matchLabels:
-<           kubernetes.io/metadata.name: frontend
-<       podSelector:
-<         matchLabels:
-<           app: webapp
-<     ports:
-<     - port: 8080
-<       protocol: TCP
----
->   ingress: [] # removed
-408,417c393
-<   - ports:
-<     - port: 8080
-<       protocol: TCP
-<     to:
-<     - namespaceSelector:
-<         matchLabels:
-<           kubernetes.io/metadata.name: backend
-<       podSelector:
-<         matchLabels:
-<           app: shipping
----
->   # removed conn
+diff --git a/netpols/all.yaml b/netpols/all.yaml
+index a0db067..80996d4 100644
+--- a/netpols/all.yaml
++++ b/netpols/all.yaml
+@@ -101,7 +101,7 @@
+						 {
+							 "podSelector": {
+								 "matchLabels": {
+-                                        "app": "recommendation"
++                                        "app": "recomendation"
+								 }
+							 }
+						 }
 ```
 
-Run of `roxctl netpol connectivity diff --dir1=acs-security-demos-with-netpol-list/ --dir2=acs-security-demos-new -o md` :
-
+Diff output: 
 
 | diff-type | source | destination | dir1 | dir2 | workloads-diff-info |
 |-----------|--------|-------------|------|------|---------------------|
-| changed | backend/reports[Deployment] | backend/catalog[Deployment] | TCP 8080 | TCP 9080 |  |
-| added | 0.0.0.0-255.255.255.255 | external/unicorn[Deployment] | No Connections | All Connections | workload external/unicorn[Deployment] added |
-| added | backend/checkout[Deployment] | external/unicorn[Deployment] | No Connections | UDP 5353 | workload external/unicorn[Deployment] added |
-| added | backend/recommendation[Deployment] | external/unicorn[Deployment] | No Connections | UDP 5353 | workload external/unicorn[Deployment] added |
-| added | backend/reports[Deployment] | external/unicorn[Deployment] | No Connections | UDP 5353 | workload external/unicorn[Deployment] added |
-| added | external/unicorn[Deployment] | 0.0.0.0-255.255.255.255 | No Connections | All Connections | workload external/unicorn[Deployment] added |
-| added | external/unicorn[Deployment] | frontend/webapp[Deployment] | No Connections | TCP 8080 | workload external/unicorn[Deployment] added |
-| added | frontend/webapp[Deployment] | external/unicorn[Deployment] | No Connections | UDP 5353 | workload external/unicorn[Deployment] added |
-| added | payments/gateway[Deployment] | external/unicorn[Deployment] | No Connections | UDP 5353 | workload external/unicorn[Deployment] added |
-| removed | frontend/webapp[Deployment] | backend/shipping[Deployment] | TCP 8080 | No Connections |  |
-| removed | payments/gateway[Deployment] | payments/mastercard-processor[Deployment] | TCP 8080 | No Connections | workload payments/mastercard-processor[Deployment] removed |
-| removed | {ingress-controller} | frontend/asset-cache[Deployment] | TCP 8080 | No Connections |  |
+| removed | backend/recommendation[Deployment] | backend/catalog[Deployment] | TCP 8080 | No Connections |  |						
 
-##  Gaps
-1. 
+
+##  Gaps to be handled
+1. Ingress/Route resources to be considered by generated network policies from `roxctl netpol generate`
+2. Better support for specific Ingress-controllers to be considered, in generation and analysis by `roxctl netpol` commands
+3. Support `Namespace` manifests without `kubernetes.io/metadata.name` label  by `roxctl netpol` commands
