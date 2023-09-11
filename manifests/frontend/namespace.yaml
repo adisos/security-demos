@@ -5,3 +5,4 @@ metadata:
   name: frontend 
   labels:
     name: frontend 
+    kubernetes.io/metadata.name: frontend
