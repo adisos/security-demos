@@ -100,7 +100,11 @@ digraph {
 **Step 2:** Choose one of the following options: 
 
 **Option1:**
-Use a locally installed Graphviz, save the `dot` output into a file `conn.dot` and run: `dot conn.dot -Tsvg -O`
+Use a locally installed Graphviz:
+```
+roxctl netpol connectivity map . -o dot > conn.dot 
+dot conn.dot -Tsvg -O
+```
 
 **Option2:** copy the `dot` output into an online viewer. 
 
