@@ -19,8 +19,8 @@ visualize the connectivity posture induced by the network policies and workloads
 
 Run `connectivity map` command on a dir of YAML manifests ,such as `Deployment, NetworkPolicy, Route` (copied from [security-demos](https://github.com/ralvares/security-demos) ): 
 ```
-git clone git@github.com:np-guard/netpol-analyzer.git
-cd netpol-analyzer/tests/acs-security-demos-with-netpol-list
+git clone --branch roxctl_netpol_demo git@github.com:adisos/security-demos.git
+cd security-demos/
 roxctl netpol connectivity map .
 ```
 
@@ -37,9 +37,12 @@ frontend/webapp[Deployment] => backend/recommendation[Deployment] : TCP 8080
 frontend/webapp[Deployment] => backend/reports[Deployment] : TCP 8080
 frontend/webapp[Deployment] => backend/shipping[Deployment] : TCP 8080
 payments/gateway[Deployment] => payments/mastercard-processor[Deployment] : TCP 8080
+payments/gateway[Deployment] => payments/visa-processor-v2[Deployment] : TCP 8080
 payments/gateway[Deployment] => payments/visa-processor[Deployment] : TCP 8080
 {ingress-controller} => frontend/asset-cache[Deployment] : TCP 8080
+{ingress-controller} => frontend/blog[Deployment] : TCP 8080
 {ingress-controller} => frontend/webapp[Deployment] : TCP 8080
+{ingress-controller} => zeroday/zeroday[Deployment] : TCP 8080
 ```
 
 The `md` output format for `roxctl netpol connectivity map . -o md` is:
@@ -58,9 +61,12 @@ The `md` output format for `roxctl netpol connectivity map . -o md` is:
 | frontend/webapp[Deployment] | backend/reports[Deployment] | TCP 8080 |
 | frontend/webapp[Deployment] | backend/shipping[Deployment] | TCP 8080 |
 | payments/gateway[Deployment] | payments/mastercard-processor[Deployment] | TCP 8080 |
+| payments/gateway[Deployment] | payments/visa-processor-v2[Deployment] | TCP 8080 |
 | payments/gateway[Deployment] | payments/visa-processor[Deployment] | TCP 8080 |
 | {ingress-controller} | frontend/asset-cache[Deployment] | TCP 8080 |
+| {ingress-controller} | frontend/blog[Deployment] | TCP 8080 |
 | {ingress-controller} | frontend/webapp[Deployment] | TCP 8080 |
+| {ingress-controller} | zeroday/zeroday[Deployment] | TCP 8080 |
 
 
 #### Connectivity graph visualization
@@ -75,10 +81,13 @@ digraph {
         "backend/reports[Deployment]" [label="backend/reports[Deployment]" color="blue" fontcolor="blue"]
         "backend/shipping[Deployment]" [label="backend/shipping[Deployment]" color="blue" fontcolor="blue"]
         "frontend/asset-cache[Deployment]" [label="frontend/asset-cache[Deployment]" color="blue" fontcolor="blue"]
+        "frontend/blog[Deployment]" [label="frontend/blog[Deployment]" color="blue" fontcolor="blue"]
         "frontend/webapp[Deployment]" [label="frontend/webapp[Deployment]" color="blue" fontcolor="blue"]
         "payments/gateway[Deployment]" [label="payments/gateway[Deployment]" color="blue" fontcolor="blue"]
         "payments/mastercard-processor[Deployment]" [label="payments/mastercard-processor[Deployment]" color="blue" fontcolor="blue"]
+        "payments/visa-processor-v2[Deployment]" [label="payments/visa-processor-v2[Deployment]" color="blue" fontcolor="blue"]
         "payments/visa-processor[Deployment]" [label="payments/visa-processor[Deployment]" color="blue" fontcolor="blue"]
+        "zeroday/zeroday[Deployment]" [label="zeroday/zeroday[Deployment]" color="blue" fontcolor="blue"]
         "{ingress-controller}" [label="{ingress-controller}" color="blue" fontcolor="blue"]
         "backend/checkout[Deployment]" -> "backend/notification[Deployment]" [label="TCP 8080" color="gold2" fontcolor="darkgreen"]
         "backend/checkout[Deployment]" -> "backend/recommendation[Deployment]" [label="TCP 8080" color="gold2" fontcolor="darkgreen"]
@@ -91,9 +100,12 @@ digraph {
         "frontend/webapp[Deployment]" -> "backend/reports[Deployment]" [label="TCP 8080" color="gold2" fontcolor="darkgreen"]
         "frontend/webapp[Deployment]" -> "backend/shipping[Deployment]" [label="TCP 8080" color="gold2" fontcolor="darkgreen"]
         "payments/gateway[Deployment]" -> "payments/mastercard-processor[Deployment]" [label="TCP 8080" color="gold2" fontcolor="darkgreen"]
+        "payments/gateway[Deployment]" -> "payments/visa-processor-v2[Deployment]" [label="TCP 8080" color="gold2" fontcolor="darkgreen"]
         "payments/gateway[Deployment]" -> "payments/visa-processor[Deployment]" [label="TCP 8080" color="gold2" fontcolor="darkgreen"]
         "{ingress-controller}" -> "frontend/asset-cache[Deployment]" [label="TCP 8080" color="gold2" fontcolor="darkgreen"]
+        "{ingress-controller}" -> "frontend/blog[Deployment]" [label="TCP 8080" color="gold2" fontcolor="darkgreen"]
         "{ingress-controller}" -> "frontend/webapp[Deployment]" [label="TCP 8080" color="gold2" fontcolor="darkgreen"]
+        "{ingress-controller}" -> "zeroday/zeroday[Deployment]" [label="TCP 8080" color="gold2" fontcolor="darkgreen"]
 }
 ```
 
@@ -102,13 +114,13 @@ digraph {
 **Option1:**
 Use a locally installed Graphviz:
 ```
-roxctl netpol connectivity map . -o dot > conn.dot 
-dot conn.dot -Tsvg -O
+roxctl netpol connectivity map . -o dot > conn1.dot 
+dot conn1.dot -Tsvg -O
 ```
 
 **Option2:** copy the `dot` output into an online viewer. 
 
-![graph](conn.dot.svg)
+![graph](conn1.dot.svg)
 
 The connectivity graph is similar to the presented diagram from the original repo:
 
@@ -207,3 +219,6 @@ Run of `roxctl netpol connectivity diff --dir1=acs-security-demos-with-netpol-li
 | removed | frontend/webapp[Deployment] | backend/shipping[Deployment] | TCP 8080 | No Connections |  |
 | removed | payments/gateway[Deployment] | payments/mastercard-processor[Deployment] | TCP 8080 | No Connections | workload payments/mastercard-processor[Deployment] removed |
 | removed | {ingress-controller} | frontend/asset-cache[Deployment] | TCP 8080 | No Connections |  |
+
+##  Gaps
+1. 
