@@ -1,7 +1,0 @@
-# Namespace for payments
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: pipeline-demo 
-  labels:
-    name: pipeline 

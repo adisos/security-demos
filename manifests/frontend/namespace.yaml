@@ -6,3 +6,4 @@ metadata:
   labels:
     name: frontend
     exposed: 'true'
+    kubernetes.io/metadata.name: frontend

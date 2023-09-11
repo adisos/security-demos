@@ -5,3 +5,4 @@ metadata:
   labels:
     name: zeroday
     exposed: 'true'
+    kubernetes.io/metadata.name: zeroday
