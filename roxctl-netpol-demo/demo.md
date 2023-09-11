@@ -202,19 +202,17 @@ The connectivity diff output for this example:
 Scenario example: a typo in a label of a `podSelector`, manually edited in a network policy YAML.
 
 ```
-diff --git a/netpols/all.yaml b/netpols/all.yaml
-index a0db067..80996d4 100644
 --- a/netpols/all.yaml
 +++ b/netpols/all.yaml
 @@ -101,7 +101,7 @@
-						 {
-							 "podSelector": {
-								 "matchLabels": {
+                             {
+                                 "podSelector": {
+                                     "matchLabels": {
 -                                        "app": "recommendation"
 +                                        "app": "recomendation"
-								 }
-							 }
-						 }
+                                     }
+                                 }
+                             }
 ```
 
 Diff output: 
@@ -226,5 +224,5 @@ Diff output:
 
 ##  Gaps to be handled
 1. Ingress/Route resources to be considered by generated network policies from `roxctl netpol generate`
-2. Better support for specific Ingress-controllers to be considered, in generation and analysis by `roxctl netpol` commands
+2. Better support for specific Ingress-controllers to be considered, in generation and analysis by `roxctl netpol` commands (for a more refined permitted connectivity based on Route/Ingress rules).
 3. Support `Namespace` manifests without `kubernetes.io/metadata.name` label  by `roxctl netpol` commands
