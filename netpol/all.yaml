@@ -1,0 +1,870 @@
+{
+    "kind": "NetworkPolicyList",
+    "apiVersion": "networking.k8s.io/v1",
+    "metadata": {},
+    "items": [
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "asset-cache-netpol",
+                "namespace": "frontend",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {
+                    "matchLabels": {
+                        "app": "asset-cache"
+                    }
+                },
+                "ingress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "namespaceSelector": {}
+                            }
+                        ]
+                    }
+                ],
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        },
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "catalog-netpol",
+                "namespace": "backend",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {
+                    "matchLabels": {
+                        "app": "catalog"
+                    }
+                },
+                "ingress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "recommendation"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "reports"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        },
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "checkout-netpol",
+                "namespace": "backend",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {
+                    "matchLabels": {
+                        "app": "checkout"
+                    }
+                },
+                "ingress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "webapp"
+                                    }
+                                },
+                                "namespaceSelector": {
+                                    "matchLabels": {
+                                        "kubernetes.io/metadata.name": "frontend"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "egress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "to": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "notification"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "to": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "recommendation"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "to": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "gateway"
+                                    }
+                                },
+                                "namespaceSelector": {
+                                    "matchLabels": {
+                                        "kubernetes.io/metadata.name": "payments"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "UDP",
+                                "port": 5353
+                            }
+                        ],
+                        "to": [
+                            {
+                                "namespaceSelector": {}
+                            }
+                        ]
+                    }
+                ],
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        },
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "gateway-netpol",
+                "namespace": "payments",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {
+                    "matchLabels": {
+                        "app": "gateway"
+                    }
+                },
+                "ingress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "checkout"
+                                    }
+                                },
+                                "namespaceSelector": {
+                                    "matchLabels": {
+                                        "kubernetes.io/metadata.name": "backend"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "egress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "to": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "mastercard-processor"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "to": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "visa-processor"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "UDP",
+                                "port": 5353
+                            }
+                        ],
+                        "to": [
+                            {
+                                "namespaceSelector": {}
+                            }
+                        ]
+                    }
+                ],
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        },
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "mastercard-processor-netpol",
+                "namespace": "payments",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {
+                    "matchLabels": {
+                        "app": "mastercard-processor"
+                    }
+                },
+                "ingress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "gateway"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        },
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "notification-netpol",
+                "namespace": "backend",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {
+                    "matchLabels": {
+                        "app": "notification"
+                    }
+                },
+                "ingress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "checkout"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        },
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "recommendation-netpol",
+                "namespace": "backend",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {
+                    "matchLabels": {
+                        "app": "recommendation"
+                    }
+                },
+                "ingress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "checkout"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "reports"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "webapp"
+                                    }
+                                },
+                                "namespaceSelector": {
+                                    "matchLabels": {
+                                        "kubernetes.io/metadata.name": "frontend"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "egress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "to": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "catalog"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "UDP",
+                                "port": 5353
+                            }
+                        ],
+                        "to": [
+                            {
+                                "namespaceSelector": {}
+                            }
+                        ]
+                    }
+                ],
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        },
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "reports-netpol",
+                "namespace": "backend",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {
+                    "matchLabels": {
+                        "app": "reports"
+                    }
+                },
+                "ingress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "webapp"
+                                    }
+                                },
+                                "namespaceSelector": {
+                                    "matchLabels": {
+                                        "kubernetes.io/metadata.name": "frontend"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "egress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "to": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "catalog"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "to": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "recommendation"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "UDP",
+                                "port": 5353
+                            }
+                        ],
+                        "to": [
+                            {
+                                "namespaceSelector": {}
+                            }
+                        ]
+                    }
+                ],
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        },
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "shipping-netpol",
+                "namespace": "backend",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {
+                    "matchLabels": {
+                        "app": "shipping"
+                    }
+                },
+                "ingress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "webapp"
+                                    }
+                                },
+                                "namespaceSelector": {
+                                    "matchLabels": {
+                                        "kubernetes.io/metadata.name": "frontend"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        },
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "visa-processor-netpol",
+                "namespace": "payments",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {
+                    "matchLabels": {
+                        "app": "visa-processor"
+                    }
+                },
+                "ingress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "gateway"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        },
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "webapp-netpol",
+                "namespace": "frontend",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {
+                    "matchLabels": {
+                        "app": "webapp"
+                    }
+                },
+                "ingress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "from": [
+                            {
+                                "namespaceSelector": {}
+                            }
+                        ]
+                    }
+                ],
+                "egress": [
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "to": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "checkout"
+                                    }
+                                },
+                                "namespaceSelector": {
+                                    "matchLabels": {
+                                        "kubernetes.io/metadata.name": "backend"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "to": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "recommendation"
+                                    }
+                                },
+                                "namespaceSelector": {
+                                    "matchLabels": {
+                                        "kubernetes.io/metadata.name": "backend"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "to": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "reports"
+                                    }
+                                },
+                                "namespaceSelector": {
+                                    "matchLabels": {
+                                        "kubernetes.io/metadata.name": "backend"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 8080
+                            }
+                        ],
+                        "to": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "app": "shipping"
+                                    }
+                                },
+                                "namespaceSelector": {
+                                    "matchLabels": {
+                                        "kubernetes.io/metadata.name": "backend"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ports": [
+                            {
+                                "protocol": "UDP",
+                                "port": 5353
+                            }
+                        ],
+                        "to": [
+                            {
+                                "namespaceSelector": {}
+                            }
+                        ]
+                    }
+                ],
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        },
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "default-deny-in-namespace-backend",
+                "namespace": "backend",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {},
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        },
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "default-deny-in-namespace-frontend",
+                "namespace": "frontend",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {},
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        },
+        {
+            "kind": "NetworkPolicy",
+            "apiVersion": "networking.k8s.io/v1",
+            "metadata": {
+                "name": "default-deny-in-namespace-payments",
+                "namespace": "payments",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "podSelector": {},
+                "policyTypes": [
+                    "Ingress",
+                    "Egress"
+                ]
+            },
+            "status": {}
+        }
+    ]
+}
