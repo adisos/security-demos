@@ -19,6 +19,9 @@ visualize the connectivity posture induced by the network policies and workloads
 
 Run `connectivity map` command on a dir of YAML manifests ,such as `Deployment, NetworkPolicy, Route` (copied from [security-demos](https://github.com/ralvares/security-demos) ): 
 ```
+mkdir ~/demo
+mkdir ~/demo/clone1
+cd ~/demo/clone1/
 git clone --branch roxctl_netpol_demo git@github.com:adisos/security-demos.git
 cd security-demos/
 roxctl netpol connectivity map .
@@ -134,10 +137,28 @@ https://github.com/stackrox/stackrox/tree/master/roxctl/netpol/connectivity/diff
 Goal: Analyze two sets of Kubernetes manifests, including network policies, in terms of connectivity.
 Produce a list of a differences in terms of allowed connections.
 
+
+demo2: cmpare connectivitiy between manifest versions after modifying network policies
+
+
+
 #### Demo1: example of added connections due to added workloads (with new network policies)
+
+Scenario example: compare connectivity between two branch version.
+Both workloads and network policy manifests have been updated.
+
+Prepare the branch of the old version:
+```
+cd ~/demo
+mkdir clone2
+cd clone2/
+git clone --branch demo_branch_old_manifests git@github.com:adisos/security-demos.git
+cd ~/demo
+```
+
 Run connectivity diff command on two versions (first is older than the second) of YAML manifests (such as Deployment, NetworkPolicy, Route) from security-demos:
 ```
- roxctl netpol connectivity diff --dir1=acs-security-demos-with-netpol-list/ --dir2=acs-security-demos-added-workloads/  -o md
+roxctl netpol connectivity diff  --dir1 clone2/ --dir2 clone1/  -o md
 ```
 
 The output of connectivity diff analysis in `md` format:
@@ -148,7 +169,35 @@ The output of connectivity diff analysis in `md` format:
 | added | {ingress-controller} | frontend/blog[Deployment] | No Connections | TCP 8080 | workload frontend/blog[Deployment] added |
 | added | {ingress-controller} | zeroday/zeroday[Deployment] | No Connections | TCP 8080 | workload zeroday/zeroday[Deployment] added |
 
-#### Demo2: example of changed connections due to changes in network policy manifests
+
+
+#### Demo2: 
+
+Scenario example: compare connectivity between two branch version.
+Only workload manifests have been updated. 
+The required updates for network policies have not been made (forgotten).
+
+
+```
+cp clone2/security-demos/netpol/all.yaml clone1/security-demos/netpols/all.yaml
+roxctl netpol connectivity diff  --dir1 clone2/ --dir2 clone1/  -o md
+```
+The connectivity diff output for this example:
+
+| diff-type | source | destination | dir1 | dir2 | workloads-diff-info |
+|-----------|--------|-------------|------|------|---------------------|
+| added | 0.0.0.0-255.255.255.255 | zeroday/zeroday[Deployment] | No Connections | All Connections | workload zeroday/zeroday[Deployment] added |
+| added | backend/checkout[Deployment] | zeroday/zeroday[Deployment] | No Connections | UDP 5353 | workload zeroday/zeroday[Deployment] added |
+| added | backend/recommendation[Deployment] | zeroday/zeroday[Deployment] | No Connections | UDP 5353 | workload zeroday/zeroday[Deployment] added |
+| added | backend/reports[Deployment] | zeroday/zeroday[Deployment] | No Connections | UDP 5353 | workload zeroday/zeroday[Deployment] added |
+| added | frontend/webapp[Deployment] | zeroday/zeroday[Deployment] | No Connections | UDP 5353 | workload zeroday/zeroday[Deployment] added |
+| added | payments/gateway[Deployment] | zeroday/zeroday[Deployment] | No Connections | UDP 5353 | workload zeroday/zeroday[Deployment] added |
+| added | zeroday/zeroday[Deployment] | 0.0.0.0-255.255.255.255 | No Connections | All Connections | workload zeroday/zeroday[Deployment] added |
+| added | zeroday/zeroday[Deployment] | frontend/asset-cache[Deployment] | No Connections | TCP 8080 | workload zeroday/zeroday[Deployment] added |
+| added | zeroday/zeroday[Deployment] | frontend/webapp[Deployment] | No Connections | TCP 8080 | workload zeroday/zeroday[Deployment] added |
+| added | {ingress-controller} | zeroday/zeroday[Deployment] | No Connections | TCP 8080 | workload zeroday/zeroday[Deployment] added |
+
+#### Demo3: example of changed connections due to changes in network policy manifests
 
 ```
 diff acs-security-demos/acs_netpols.yaml acs-security-demos-new/acs_netpols.yaml
