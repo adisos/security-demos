@@ -22,11 +22,9 @@ visualize the connectivity posture induced by the network policies and workloads
 Run `connectivity map` command on a dir of YAML manifests ,such as `Deployment, NetworkPolicy, Route` (copied from [security-demos](https://github.com/ralvares/security-demos) ): 
 ```
 mkdir ~/demo
-mkdir ~/demo/clone1
-cd ~/demo/clone1/
-git clone --branch roxctl_netpol_demo git@github.com:adisos/security-demos.git
-cd security-demos/
-roxctl netpol connectivity map .
+cd ~/demo/
+git clone --branch roxctl_netpol_demo git@github.com:adisos/security-demos.git new_security_demos
+roxctl netpol connectivity map ./new_security_demos
 ```
 
 The textual output for this run is:
@@ -50,7 +48,7 @@ payments/gateway[Deployment] => payments/visa-processor[Deployment] : TCP 8080
 {ingress-controller} => zeroday/zeroday[Deployment] : TCP 8080
 ```
 
-The `md` output format for `roxctl netpol connectivity map . -o md` is:
+The `md` output format for `roxctl netpol connectivity map ./new_security_demos -o md` is:
 
 
 | src | dst | conn |
@@ -76,7 +74,7 @@ The `md` output format for `roxctl netpol connectivity map . -o md` is:
 
 #### Connectivity graph visualization
 
-**Step 1:**  run `roxctl netpol connectivity map . -o dot`
+**Step 1:**  run `roxctl netpol connectivity map ./new_security_demos -o dot`
 ```
 digraph {
         "backend/catalog[Deployment]" [label="backend/catalog[Deployment]" color="blue" fontcolor="blue"]
@@ -119,7 +117,7 @@ digraph {
 **Option1:**
 Use a locally installed Graphviz:
 ```
-roxctl netpol connectivity map . -o dot > conn1.dot 
+roxctl netpol connectivity map ./new_security_demos -o dot > conn1.dot 
 dot conn1.dot -Tsvg -O
 ```
 
@@ -152,16 +150,13 @@ Both workloads and network policy manifests have been modified in the newer bran
 Prepare the branch of the old version:
 ```
 cd ~/demo
-mkdir clone2
-cd clone2/
-git clone --branch demo_branch_old_manifests git@github.com:adisos/security-demos.git
-cd ~/demo
+git clone --branch demo_branch_old_manifests git@github.com:adisos/security-demos.git old_security_demos
 ```
-The branch of the new version is at clone1 from the previous demo above.
+The branch of the new version is at new_security_demos/ from the previous demo above.
 
 Run connectivity diff command on two versions (first is older than the second) of YAML manifests (such as Deployment, NetworkPolicy, Route) from security-demos:
 ```
-roxctl netpol connectivity diff  --dir1 clone2/ --dir2 clone1/  -o md
+roxctl netpol connectivity diff  --dir1 old_security_demos/ --dir2 new_security_demos/  -o md
 ```
 
 The output of connectivity diff analysis in `md` format:
@@ -182,8 +177,8 @@ Assume that the required updates for network policies have not been made on the 
 
 
 ```
-cp clone2/security-demos/netpol/all.yaml clone1/security-demos/netpols/all.yaml
-roxctl netpol connectivity diff  --dir1 clone2/ --dir2 clone1/  -o md
+cp old_security_demos/netpol/all.yaml new_security_demos/netpols/all.yaml
+roxctl netpol connectivity diff  --dir1 old_security_demos/ --dir2 new_security_demos/  -o md
 ```
 The connectivity diff output for this example:
 
