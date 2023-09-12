@@ -5,6 +5,8 @@
 
 ## Generation of network policies
 
+https://github.com/stackrox/stackrox/tree/master/roxctl/netpol/generate
+
 command is now `roxctl netpol generate` (instead of `roxctl generate netpol` )
 
 ## Connectivity map : analyze cluster permitted connectivity
@@ -144,8 +146,8 @@ Produce a list of a differences in terms of allowed connections.
 
 #### Demo1: example of added connections due to added workloads (with new network policies)
 
-Scenario example: compare connectivity between two branch version.
-Both workloads and network policy manifests have been updated.
+Scenario example: compare connectivity between two branch versions.
+Both workloads and network policy manifests have been modified in the newer branch.
 
 Prepare the branch of the old version:
 ```
@@ -155,6 +157,7 @@ cd clone2/
 git clone --branch demo_branch_old_manifests git@github.com:adisos/security-demos.git
 cd ~/demo
 ```
+The branch of the new version is at clone1 from the previous demo above.
 
 Run connectivity diff command on two versions (first is older than the second) of YAML manifests (such as Deployment, NetworkPolicy, Route) from security-demos:
 ```
@@ -173,9 +176,9 @@ The output of connectivity diff analysis in `md` format:
 
 #### Demo2: 
 
-Scenario example: compare connectivity between two branch version.
-Only workload manifests have been updated. 
-The required updates for network policies have not been made (forgotten).
+Scenario example: compare connectivity between two branch versions.
+Only workload manifests have been modified in the newer branch.
+Assume that the required updates for network policies have not been made on the newer branch yet.
 
 
 ```
